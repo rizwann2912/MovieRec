@@ -101,7 +101,7 @@ tensorboard==2.18.0
 tensorboard-data-server==0.7.2
 tensorflow==2.18.0
 tensorflow-serving-api==2.18.0
-tensorflow_intel==2.18.0
+tensorflow_intel
 termcolor==2.4.0
 toml==0.10.2
 torch==2.4.0
