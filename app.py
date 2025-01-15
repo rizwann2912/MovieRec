@@ -1,26 +1,44 @@
 import streamlit as st
 import pickle
-import requests  # To fetch poster URLs from TMDB API
+import requests
+import gdown
+import os
+
+# File paths
+simi_file = 'simi.pkl'
+movies_file = 'movies.pkl'
+
+# Download the simi.pkl file from Google Drive if not already present
+if not os.path.exists(simi_file):
+    url = 'https://drive.google.com/uc?id=17rwhbxHtHQUTSi0K05ALh8EKf20iZWmq'  # Corrected URL
+    output = simi_file
+    gdown.download(url, output, quiet=False)
+
+# Check if movies.pkl exists
+if os.path.exists(movies_file):
+    print(f"{movies_file} loaded successfully!")
+else:
+    print(f"{movies_file} is not found.")
 
 # Load the similarity matrix and movies list
-simi = pickle.load(open('simi.pkl', 'rb'))
-movies_list = pickle.load(open('movies.pkl', 'rb'))
-
+simi = pickle.load(open(simi_file, 'rb'))
+movies_list = pickle.load(open(movies_file, 'rb'))
 
 # Function to fetch poster URLs using TMDB API
 def fetch_poster(movie_title):
     api_key = '9f0ba8aa44abd01293ef1c2065b4736f'
     url = f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={movie_title}"
-    response = requests.get(url)
-    data = response.json()
+    try:
+        response = requests.get(url)
+        data = response.json()
 
-    # Return the poster path if available, else a placeholder image
-    if data['results']:
-        poster_path = data['results'][0]['poster_path']
-        return f"https://image.tmdb.org/t/p/w500{poster_path}"  # Full poster URL
-    else:
-        return "https://via.placeholder.com/200x300?text=Poster+Not+Found"
-
+        if data['results']:
+            poster_path = data['results'][0]['poster_path']
+            return f"https://image.tmdb.org/t/p/w500{poster_path}"
+        else:
+            return "https://via.placeholder.com/200x300?text=Poster+Not+Found"
+    except requests.exceptions.RequestException as e:
+        return "https://via.placeholder.com/200x300?text=Error+Fetching+Poster"
 
 # Define the recommendation function
 def recommend(movie):
@@ -43,6 +61,20 @@ def recommend(movie):
             st.image(poster_url, use_container_width=True)
             st.write(f"**{movie_title}**")
             st.write(f"Similarity: {similarity_percentage}%")
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://files.oaiusercontent.com/file-KEsjUddqenHi2bHinEUVqv?se=2025-01-15T22%3A03%3A28Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D1950ce40-e7f9-4651-835c-c73bfbb1705d.webp&sig=Cd/VzgA1EDt0wjNCIiOp2fINCZ4dLL9wXSpyXnfYjLs%3D");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Streamlit app title
 st.title('Movie Recommender System')
