@@ -62,22 +62,18 @@ def recommend(movie):
             st.write(f"**{movie_title}**")
             st.write(f"Similarity: {similarity_percentage}%")
 
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-image: url("https://files.oaiusercontent.com/file-KEsjUddqenHi2bHinEUVqv?se=2025-01-15T22%3A03%3A28Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D1950ce40-e7f9-4651-835c-c73bfbb1705d.webp&sig=Cd/VzgA1EDt0wjNCIiOp2fINCZ4dLL9wXSpyXnfYjLs%3D");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 # Streamlit app title
 st.title('Movie Recommender System')
+
+st.markdown(
+    """
+    <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+    <strong>Note:</strong> The recommendations are based on similarities in the <em>cast, directors, and overview</em> of the movies.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # Dropdown to select a movie
 selected_movie_name = st.selectbox('Select which movie you liked the most', movies_list['title'].values)
